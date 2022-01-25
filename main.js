@@ -1,39 +1,38 @@
-function UserGreeting(props) {
-    return <h1>Bienvenue !</h1>;
-  }
-  
-  function GuestGreeting(props) {
-    return <h1>Veuillez vous connecter</h1>;
-  }
-  function Greeting(props) {
-      const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-
-      const handleLogIn = (e) => {
-          e.preventDefault();
-          setIsLoggedIn(true);
-      }
-
-      const handleLogOut = (e) => {
-          e.preventDefault();
-          setIsLoggedIn(false);
-      }
-
+function User(props){
     return(
-        <React.Fragment>
-            {isLoggedIn ? 
-            <React.Fragment>
-                <UserGreeting />
-                <button onClick={handleLogOut}>Se déconnecter</button>
-            </React.Fragment> : 
-            <React.Fragment>
-                <GuestGreeting />
-                <button onClick={handleLogIn}>Se connecter</button>
-            </React.Fragment> }
-        </React.Fragment>
+        <div>
+            <ul>
+                <li>nom : {props.name}</li>
+                <li>email : {props.email}</li>
+                <li>société : {props.company}</li>
+                <li>numéro de téléphone : {props.phone}</li>
+                <li>site internet : {props.website}</li>
+            </ul>
+        </div>
     )
-  }
-  
-  ReactDOM.render(
-    <Greeting />,
-    document.querySelector('#app')
-  );
+}
+
+function VisitCards(props){
+    const [users, setUsers] = React.useState([]);
+   
+    React.useEffect(() => {
+       getUsers();
+   }, []);
+   
+   const getUsers = async () => {
+       let response = await fetch('https://jsonplaceholder.typicode.com/users');
+       let data = await response.json();
+       setUsers(data);
+   }
+
+    return( 
+        <React.Fragment>
+            {users.map( u =>
+                <User key={u.id} name={u.name} email={u.email} company={u.company.name} phone={u.phone} website={u.website}/>
+            )}
+        </React.Fragment>)
+   
+}
+
+ReactDOM.render(<VisitCards/>, document.querySelector('#app'));
+
