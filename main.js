@@ -1,140 +1,83 @@
-// function NameForm(){
-//     const [value, setValue] = React.useState('');
-
-//     const handleChange = (e) => {
-//         setValue(e.target.value);
-//     }
-
-//     const handleSubmit = (event) => {
-//         alert('Le nom a été soumis : ' + value);
-//         event.preventDefault();
-//     }
-
-//     return (
-//         <form onSubmit={handleSubmit}>
-//           <label>
-//             Nom :
-//             <input type="text" value={value} onChange={handleChange} />
-//           </label>
-//           <input type="submit" value="Envoyer" />
-//         </form>
-//     );
-// }
-// ReactDOM.render(<NameForm/>, document.querySelector('#app'));
-
-   
-
-// function EssayForm(){
-//     const [value, setValue] = React.useState('Écrivez un essai à propos de votre élément du DOM préféré');
-
-//     const handleChange = (event) => {
-//         setValue(event.target.value);
-//     }
-    
-//     const handleSubmit = (event) => {
-//         alert('Un essai a été envoyé : ' + value);
-//         event.preventDefault();
-//     }
-//     return (
-//         <form onSubmit={handleSubmit}>
-//           <label>
-//             Essay:
-//             <textarea value={value} onChange={handleChange} />
-//           </label>
-//           <input type="submit" value="Envoyer" />
-//         </form>
-//       );
-// }
-// ReactDOM.render(<EssayForm/>, document.querySelector('#app'));
-
-
-
-// function FlavorForm(){
-//     const [value, setValue] = React.useState("coconut");
-
-//     const handleChange = (event) => {
-//         setValue(event.target.value);
-//     }
-    
-//     const handleSubmit = (event) => {
-//         alert('Votre parfum favori est : ' + value);
-//         event.preventDefault();
-//     }
-
-//     return (
-//         <form onSubmit={handleSubmit}>
-//           <label>
-//             Choisissez votre parfum favori :
-//             <select value={value} onChange={handleChange}>
-//               <option value="grapefruit">Pamplemousse</option>
-//               <option value="lime">Citron vert</option>
-//               <option value="coconut">Noix de coco</option>
-//               <option value="mango">Mangue</option>
-//             </select>
-//           </label>
-//           <input type="submit" value="Envoyer" />
-//         </form>
-//       );
-// }
-
-// ReactDOM.render(<FlavorForm/>, document.querySelector('#app'));
-
-
-function Form(){
-    const [value, setValue] = React.useState({
-        name : "",
-        flavor : "",
-        essay : ""
-    });
-    // const [name, setName] = React.useState('');
-    // const [flavor, setflavor] = React.useState('');
-    // const [essay, setEssay] = React.useState('');
-
-
-    const handleChange = (e) => {
-        const target = e.target;
-        const inputValue = target.type === 'checkbox' ? target.checked : target.value;
-        const name = target.name;
-
-        setValue(state => ({...state, [name] : inputValue}));
-        console.log(value);
-        // switch(e.target.name){
-        //     case 'name' : setName(e.target.value);
-        //         break;
-        //     case 'flavor' : setflavor(e.target.value);
-        //         break;
-        //     case 'essay' : setEssay(e.target.value);
-        //         break;
-        //     default:
-        // }
-    }
-
-    const handleSubmit = (event) => {
-        alert('nom : ' + value.name + "\nparfum : " + value.flavor + "\nessay : "+ value.essay);
-        event.preventDefault();
-    }
-
-    return (
-        <form onSubmit={handleSubmit}>
-          <label>
-            Nom :
-            <input type="text" value={value.name} onChange={handleChange} name='name'/>
-          </label>
-          <label>
-            Choisissez votre parfum favori :
-            <select value={value.flavor} onChange={handleChange} name="flavor">
-              <option value="grapefruit">Pamplemousse</option>
-              <option value="lime">Citron vert</option>
-              <option value="coconut">Noix de coco</option>
-              <option value="mango">Mangue</option>
-            </select>
-          </label>
-          <label>
-            Essay:
-            <textarea value={value.essay} onChange={handleChange} name='essay'/>
-          </label>
-          <input type="submit" value="Envoyer" />
-        </form>
-    );
+function Pokemon(props){
+  const colours = {
+    normal: '#A8A77A',
+    fire: '#EE8130',
+    water: '#6390F0',
+    electric: '#F7D02C',
+    grass: '#7AC74C',
+    ice: '#96D9D6',
+    fighting: '#C22E28',
+    poison: '#A33EA1',
+    ground: '#E2BF65',
+    flying: '#A98FF3',
+    psychic: '#F95587',
+    bug: '#A6B91A',
+    rock: '#B6A136',
+    ghost: '#735797',
+    dragon: '#6F35FC',
+    dark: '#705746',
+    steel: '#B7B7CE',
+    fairy: '#D685AD',
+  };
+  
+  return(
+    <div className='flex' style={{backgroundColor : colours[props.type]}}>
+      <img src={props.img} alt="" />
+      <p>{props.name}</p>
+    </div>
+  )
 }
-ReactDOM.render(<Form/>, document.querySelector('#app'));
+
+function App(){
+  const [allPokemons, setAllPokemons] = React.useState([]);
+  const [pokemonData, setPokemonData] = React.useState([]);
+  const [searchInput, setSearchInput] = React.useState('');
+  const [searchResult, setSearchResult] = React.useState([]);
+
+  React.useEffect(()=> {
+    fetch('https://pokeapi.co/api/v2/pokemon?limit=150')
+    .then(res => res.json())
+    .then(json => setAllPokemons(json.results));
+
+  }, [])
+
+  React.useEffect(() => {
+    allPokemons.map(pokemon => {
+      fetch(pokemon.url)
+      .then(res => res.json())
+      .then(json => setPokemonData(state => ([...state,
+        json
+      ])))
+    })
+  }, [allPokemons]);
+
+  React.useEffect(() => {
+    setSearchResult(pokemonData.filter(function(pkmn){
+    return pkmn.name.includes(searchInput);
+  }));
+  }, [searchInput])
+
+  React.useEffect(() => {
+    setSearchResult(pokemonData);
+
+  }, [pokemonData])
+
+  const handleChange = (e) => {
+    setSearchInput(e.target.value);
+    
+  }
+
+  return(
+    <React.Fragment>
+      <form>
+        <input type="text" value={searchInput} onChange={handleChange}/>
+      </form>
+        { 
+          searchResult.map(pokemon => 
+            <Pokemon key={pokemon.id} name={pokemon.name} type={pokemon.types[0].type.name} img={pokemon.sprites.front_default}/>)
+        }
+    </React.Fragment>
+  )
+}
+ReactDOM.render(<App/>, document.querySelector('#app'));
+
