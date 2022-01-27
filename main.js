@@ -9,9 +9,6 @@ function Todo(){
         isEditing: false
     })
 
-    
-
-
     React.useEffect(() => {
         document.addEventListener("keydown", escEnter, false);
 
@@ -34,9 +31,10 @@ function Todo(){
             setNewTodo(state => ({...state, title : ''}))
         }
         if(e.key === 'Enter'){
+            
             setTodos(state => ({...state, [newTodo.id] : newTodo}));
-            setIdNumber(todos.length);
-            console.log(idNumber)
+            
+            
             // setNewTodo({
             //     id: idNumber,
             //     title: '',
@@ -48,8 +46,10 @@ function Todo(){
     
     React.useEffect(()=> {
         //console.log(newTodo);
+        setIdNumber(idNumber+1);
+        console.log(idNumber)
         console.log(todos)
-    }, [todos, newTodo])
+    }, [todos])
 
     return(
         <React.Fragment>
