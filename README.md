@@ -75,11 +75,3 @@ La méthode `toString()` nous permettra de convertir facilement nos inputs dans 
 ---
 
 Pour passer à la suite vous devez commit vos changements puis checkout sur la branche exo11
-
-
-
-
-
-
-
-

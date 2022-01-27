@@ -1,288 +1,117 @@
+function App1(){
 
+  const [state, setState] = React.useState({
+    decimal : '',
+    binary : ''
+  })
 
-// -------------------------------------------
-// Étape 1 => On modifie le composant input
-// -------------------------------------------
+  React.useEffect(() => {
+    convertToBinary();
+  }, [state.decimal])
 
-/* class NameForm extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {value: ''};
-  
-      this.handleChange = this.handleChange.bind(this);
-      this.handleSubmit = this.handleSubmit.bind(this);
+  React.useEffect(() => {
+    convertToDecimal();
+  }, [state.binary])
+
+  const handleChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setState(state => ({...state, [name] : value}));    
+  }
+
+  const convertToBinary = () => {
+    if(Number.isNaN(parseInt(state.decimal))){
+      return setState(state => ({...state, binary : ''}));
     }
-  
-    handleChange(event) {
-      this.setState({value: event.target.value});
-    }
-  
-    handleSubmit(event) {
-      alert('Le nom a été soumis : ' + this.state.value);
-      event.preventDefault();
-    }
-  
-    render() {
-      return (
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Nom :
-            <input type="text" value={this.state.value} onChange={this.handleChange} />
-          </label>
-          <input type="submit" value="Envoyer" />
-        </form>
-      );
+    else {
+      return setState(state => ({...state, binary : parseInt(state.decimal).toString(2)}));
     }
   }
- */
 
-
-function NameForm(props) {
-    const [name, setName] = React.useState('');
-
-    const handleChange = (e) => {
-        e.preventDefault();
-        setName(e.target.value);
+  const convertToDecimal = () => {
+    let isBinary = false;
+    for (let i = 0; i < state.binary.length; i++) {
+      if (state.binary[i] == "0" || state.binary[i] == "1") {
+        isBinary = true;
+      } else {
+        isBinary = false;
+      }
     }
-
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        console.log(`Le nom a été soumis: ${name}`);
+    if(isBinary){
+      return setState({...state, decimal : parseInt(state.binary, 2)})
     }
-
-
-
-    return(
-    <form onSubmit={handleSubmit}>
-        <label>
-        Nom :
-        <input type="text" value={name} onChange={handleChange} />
-        </label>
-        <input type="submit" value="Envoyer" />
-    </form>
-);
-}
-
-
-
-// ReactDOM.render(<NameForm />, document.querySelector('#app'));
-
-
-
-
-
-
-// -------------------------------------------
-// Étape 2 => On modifie le composant textarea
-// -------------------------------------------
-
-
-
-/* class EssayForm extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        value: 'Écrivez un essai à propos de votre élément du DOM préféré'
-      };
-  
-      this.handleChange = this.handleChange.bind(this);
-      this.handleSubmit = this.handleSubmit.bind(this);
+    else {
+      return setState({...state, decimal : ''})
     }
-  
-    handleChange(event) {
-      this.setState({value: event.target.value});
-    }
-  
-    handleSubmit(event) {
-      alert('Un essai a été envoyé : ' + this.state.value);
-      event.preventDefault();
-    }
-  
-    render() {
-      return (
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Essay:
-            <textarea value={this.state.value} onChange={this.handleChange} />
-          </label>
-          <input type="submit" value="Envoyer" />
-        </form>
-      );
-    }
-  } */
-
-function EssayForm(props) {
-    const [text, setText] = React.useState('Écrivez un essai à propos de votre élément du DOM préféré');
-
-    const handleChange = (e) => {
-        e.preventDefault();
-        setText(e.target.value);
-    }
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(`Le texte a été soumis: ${text}`);
-    }
-      
-    return(
-        <form onSubmit={handleSubmit}>
-          <label>
-            Essay:
-            <textarea rows={5} cols={35} value={text} onChange={handleChange} />
-          </label>
-          <input type="submit" value="Envoyer" />
-        </form>
-
-      )
-
 
   }
 
+  return(
+    <React.Fragment>
+      <BaseNumberInput value={state.decimal} handleChange={handleChange} name={'decimal'}/>
+      <BaseNumberInput value={state.binary} handleChange={handleChange} name={'binary'}/>
+    </React.Fragment>
+  )
+
+}
+function BaseNumberInput({value, handleChange, name}){
+
+  return(
+    <React.Fragment>
+      <label htmlFor={name}>{name}</label>
+      <input type="text"  value={value} onChange={handleChange} name={name}/>
+    </React.Fragment>
+  )
+}
+ReactDOM.render(<App1 />, document.querySelector('#app1'));
 
 
-//   ReactDOM.render(<EssayForm />, document.querySelector('#app'));
+
+function App2(){
+  const[state, setState] = React.useState({
+    conversion : '',
+    decimal : '',
+    converted : ''
+  })
+
+  React.useEffect(() => {
+    convert();
+  }, [state.decimal, state.conversion])
 
 
+  const handleChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setState({...state, [name] : value});
+  }
 
-
-
-// -------------------------------------------
-// Étape 3 => On modifie le composant select
-// -------------------------------------------
-
-/* class FlavorForm extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {value: 'coconut'};
-  
-      this.handleChange = this.handleChange.bind(this);
-      this.handleSubmit = this.handleSubmit.bind(this);
+  const convert = () => {
+    if(Number.isNaN(parseInt(state.decimal))){
+      return setState(state => ({...state, converted : ''}));
     }
-  
-    handleChange(event) {
-      this.setState({value: event.target.value});
+    else {
+      return setState(state => ({...state, converted : parseInt(state.decimal).toString(state.conversion)}));
     }
-  
-    handleSubmit(event) {
-      alert('Votre parfum favori est : ' + this.state.value);
-      event.preventDefault();
-    }
-  
-    render() {
-      return (
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Choisissez votre parfum favori :
-            <select value={this.state.value} onChange={this.handleChange}>
-              <option value="grapefruit">Pamplemousse</option>
-              <option value="lime">Citron vert</option>
-              <option value="coconut">Noix de coco</option>
-              <option value="mango">Mangue</option>
-            </select>
-          </label>
-          <input type="submit" value="Envoyer" />
-        </form>
-      );
-    }
-  } */
-
-function FlavorForm(props) {
-    const [value, setValue] = React.useState('coconut');
-    const handleChange = (e) => {
-        e.preventDefault();
-        setValue(e.target.value)
-
-    }
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(`la valeur sélectionnée est: ${value}`);
-    }
-
-    return(
-        <form onSubmit={handleSubmit}>
-          <label>
-            Choisissez votre parfum favori :
-            <select value={value} onChange={handleChange}>
-              <option value="grapefruit">Pamplemousse</option>
-              <option value="lime">Citron vert</option>
-              <option value="coconut">Noix de coco</option>
-              <option value="mango">Mangue</option>
-            </select>
-          </label>
-          <input type="submit" value="Envoyer" />
-        </form>
-    );
+  }
+  return(
+    <React.Fragment>
+      <select name="conversion" onChange={handleChange}>
+        <option value="0" disabled selected>Choisir une option</option>
+        <option value="2">binaire</option>
+        <option value="3">ternaire</option>
+        <option value="7">septénaire</option>
+        <option value="16">héxadécimal</option>
+      </select>
+      {state.conversion !== '' &&
+      <React.Fragment>
+        <label htmlFor="decimal">Décimal</label>
+        <input type="text" value={state.decimal} name={'decimal'} onChange={handleChange}/>
+        <label htmlFor="converted">conversion</label>
+        <input type="text" value={state.converted} name={'converted'} onChange={handleChange} disabled/>
+      </React.Fragment>
+      }
+    </React.Fragment>
+  )
 }
 
-
-
-//ReactDOM.render(<FlavorForm/>, document.querySelector('#app'));
-
-
-
-
-function MultiForm(props) {
-    const [inputs, setInputs] = React.useState({
-        name: '',
-        text: '',
-        value: "coconut"
-    });
-
-    
-
-/*     
-
-    // useCallback n'est pas forcément le meilleur choix ici
-
-    
-    const handleChange = React.useCallback(
-        ({target: {name, value}}) => {
-            setInputs(state => ({...state, [name]: value}), []);
-            console.log(inputs);
-        },
-        [inputs]
-    )
-
- */
-
-    
-    const handleChange = ({target: {name, value}}) => {
-        setInputs(state => ({...state, [name]: value}), []);
-    }
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        for(const name in inputs) {
-            console.log(`${name}: ${inputs[name]}`)
-        }
-    }
-
-
-    return(
-        <form onSubmit={handleSubmit}>
-            <label>
-                Nom :
-                <input type="text" name="name" value={inputs.name} onChange={handleChange} />
-            </label>
-
-            <label>
-                Essay:
-                <textarea name="text" value={inputs.text} onChange={handleChange} />
-            </label>
-
-            <label>
-                Choisissez votre parfum favori :
-                <select name="value" value={inputs.value} onChange={handleChange}>
-                    <option value="grapefruit">Pamplemousse</option>
-                    <option value="lime">Citron vert</option>
-                    <option value="coconut">Noix de coco</option>
-                    <option value="mango">Mangue</option>
-                </select>
-            </label>
-
-            <input type="submit" value="Envoyer" />
-        </form>
-    )
-}
-
-ReactDOM.render(<MultiForm />, document.querySelector('#app'));
+ReactDOM.render(<App2 />, document.querySelector('#app2'));
